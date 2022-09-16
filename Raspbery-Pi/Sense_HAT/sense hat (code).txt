@@ -1,0 +1,351 @@
+VNC viewer
+----------------------------------------
+code: (displaying text)
+
+from sense_hat import SenseHat  #importing SenseHat
+from time import sleep
+from random import randint
+
+sense = SenseHat()     #initializing SenseHat
+r = randint(0,255)
+sense.show_letter("e", (r,0,0)) #Displaying letter e on LED matrix
+sleep(1)
+r = randint(0,255)
+sense.show_letter("d", (0,0,r))
+sleep(1)
+sense.clear()     #Clearing SenseHat LED Matrix
+
+-----------------------------------------------
+-----------------------------------------------
+-----------------------------------------------
+-----------------------------------------------
+-----------------------------------------------
+---------------------------------------
+code: (displaying images)
+
+from sense_hat import SenseHat 
+sense = SenseHat()
+r =(255, 0, 0)            #RGB code for different colours
+o =(255, 127, 0)
+y =(255, 255, 0)
+g =(0, 255, 0)
+b =(0,0, 255)
+i =(75, 0, 130)
+v =(159, 0, 255)
+e =(0, 0, 0)
+
+image = 
+[e,e,e,e,e,e,e,e,e,e,e,r,r,o,o,r,r,e,r,o,o,y,y,o,o,r,o,y,y,g,g,y,y,
+o,y,g,g,b,b,g,g,y,b,b,i,i,b,b,b,b,i,i,v,v,i,i,b] 
+
+#displaying image on LED matrix
+
+Sense.set_pixels(image)
+
+
+-----------------------------------------------
+-----------------------------------------------
+-----------------------------------------------
+--------------------------------------
+code: (Setting Orientation)
+
+from sense_hat import SenseHat
+import time
+sense = SenseHat()
+Sense.show_letter("J")
+angles = [0,90,180,270,0,90,180,270]   #setting angles for rotation
+
+for r in angles:
+       sense.set_rotation(r)
+       time.sleep(0.5)                 #Rotating the letter
+sense.clear()
+
+-----------------------------------------------
+-----------------------------------------------
+-----------------------------------------------
+-----------------------------------------------
+---------------------------------------
+code: (sensing the environment)
+
+from sense_hat import SenseHat
+sense = SenseHat()
+while True:
+	t=sense.get_tempurature()
+	p=sense.get_pressure()
+	h=sense.get_humidity() #getting tempurature, humidity & pressure
+	t=round(t,1)
+	p=round(p,1)
+	h=round(h,1)  #rounding to 1 decimal point
+
+	if t > 36:
+		bg=[0,100,0]  #green
+		tc=[255,255,255] #white
+	else:
+		bg=[0,0,100] #blue
+		tc=[200,200,0] #yellow
+
+	msg ="Tempurature ={0}, Pressure ={1}, Humidity={2}".format(t,p,h)
+	sense.show_message(msg,scroll_speed=0.05,text_colour=tc, back_colour=bg)
+
+-----------------------------------------------
+-----------------------------------------------
+-----------------------------------------------
+-----------------------------------------------
+---------------------------------------
+code:(detecting movement)
+
+*taking value of orientation
+
+from sense_hat import SenseHat
+sense = SenseHat()
+while True:
+	orientation = sense.get_orientation() #Getting orientation using gyroscope
+	
+	pitch = orientation['pitch'] 
+	roll = orientation['roll']
+	yaw = orientation['raw']  #getting pitch, roll, yaw
+
+	print("pitch={0}. roll={1}, yaw={2}".format(pitch,yaw,roll))
+
+
+*taking value of acceleration
+
+from sense_hat import SenseHat
+sense = SenseHat()
+while True:
+	acceleration = sense.get_accelerometer_raw()
+		
+	x = acceleration['x']
+	y = acceleration['y']
+	z = acceleration['Z']   #Gets the amount of gravitatio-foce acting on each axis
+	x = round (x,0)
+	y = round (y,0)
+	z = round (z,0)
+	print("x={0}, y={1}, z={2}".format(x,y,z))
+
+
+-----------------------------------------------
+-----------------------------------------------
+-----------------------------------------------
+---------------------------------------
+code:(sensing Environment-Whether Detection System)
+
+from sense_hat import SenseHat
+import time
+from time import asctime
+
+sense = SenseHat()
+
+While True:
+	temp=round(sense.get_tempurature()*1.8 +32)
+	humidity = round(sense.get_humidity())
+	pressure = round(sense.get_pressure())
+	message =' T=%dF, H=%d, P=%d' %(temp.humidity.pressure)
+	sense.show_message(message, scroll_speed=(0.08), text_colour=[200,240,200], back_colour=[0,0,0]
+	time.sleep(4) #delay
+	log = open('weather.txt', "a")
+	now = str(asctime())
+	log.write(now+''+message+'\n')
+	print(message)
+	log.close()
+	time.sleep(5)
+
+----1.27.25----
+-----------------------------------------------
+-----------------------------------------------
+-----------------------------------------------
+-----------------------------------------------
+sending to email (make it as Email.py)
+
+import smtplib
+from email.MIMEMultipart import MIMEMultipart
+from email.MIMEText import MIMEText
+from sense_hat import SenseHat
+import time
+from time import asctime
+
+sense=SenseHat()
+
+fromaddr = "edurekatest11@gmail.com"
+toaddr ="edurekaraspberrypi@gmai.com"
+msg =MIMEMultipart()
+msg['From'] =fromaddr
+msg['To'] = toaddr
+msg['Subject'] = "Temp Rasp"
+
+temp=round(sense.get_tempurature()*1.8 +32)
+humidity = round(sense.get_humidity())
+pressure = round(sense.get_pressure())
+message =" T=%dF, H=%d, P=%d" %(temp.humidity.pressure)
+print(message)
+msg.attach(MIMEText(message, 'plain'))
+
+server = smtplib.SMTP('smtp.gmail.com', 25) # port
+server.starttls()
+server.login(fromaddr, "#password_here")
+text = msg.as_string()
+server.sendmail(fromaddr,toaddr, text)
+server.quit()
+
+-----------------------------------------------
+-----------------------------------------------
+-----------------------------------------------
+Final Program.py -----1.34.37
+
+
+import pycurl, json             # pycurl: help on establish connection of API
+from StringIO import StringIO   #StringIO: a StringIO package
+import RPi.GPIO as GPIO         #GPIO from Raspberry Pi
+from sense_hat import SenseHat  #importing Sense Hat
+import time			#for delay
+from time import asctime        #importing Time
+
+sense = senseHat()
+sense.clear()  #clear data that stuck for sensors
+
+cold=37  #notification
+hot=40
+pushMessage=""
+
+#####################################
+#Code for display number
+
+OFFSET_LEFT = 1  #off 1st colum (IoT demo picture)
+OFFSET_TOP = 2   #off first 2 rows
+
+#Diplaying numbers on SenseHat: Tens Place
+NUMS = [1,1,1,1,0,1,1,0,1,1,0,1,1,1,1, #0 - 3x5 matrix in IoT Demo-2 picture
+	0,1,0,0,1,0,0,1,0,0,1,0,0,1,0, #1
+	1,1,1,0,0,1,0,1,0,1,0,0,1,1,1, #2
+	1,1,1,0,0,1,1,1,1,0,0,1,1,1,1, #3
+	1,0,0,1,0,1,1,1,1,0,0,1,0,0,1, #4
+	1,1,1,1,0,0,1,1,1,0,0,1,1,1,1, #5
+	1,1,1,1,0,0,1,1,1,1,0,1,1,1,1, #6
+	1,1,1,0,0,1,0,1,0,1,0,0,1,0,0, #7
+	1,1,1,1,0,1,1,1,1,1,0,1,1,1,1, #8
+	1,1,1,1,0,1,1,1,1,0,0,1,0,0,1] #9 
+
+#Display a single digit (0-9) on SenseHat
+#xd - x coordinate to where the digit has to be represent
+#yd - y coordinate to where the digit has to be represent
+#rgb - red green blue
+#val - takes value as input(xd) , tens value
+
+def show_digit(val, xd, yd, r, g, b):
+	offset = val * 15  
+#lets say val is 3 (3rd row of matrix), then 3*15 = 45 (need to move 45 position)
+	for p in range(offset, offset + 15):
+		xt = p % 3  #0 place, 1 place, or 2 place
+		yt = (p-offset) // 3   #which column value should be take
+		sense.set_pixel(xt+xd, yt+yd, r*NUMS[p], g*NUMS[p], b*NUMS[p])
+
+#Displays a two-digit postive number (0-99) on senseHat
+def show_number(val, r, g, b):
+	abs_val = abs(val)
+	tens = abs_val // 10
+	units = abs_val % 10
+	if (abs_val > 9):
+		show_digit(tens, OFFSET_LEFT, OFFSET_TOP, r, g, b)
+	show_digit(units, OFFSET_LEFT+4, OFFSET_TOP, r, g, b)
+
+#---------1:44:22---------------------
+################################################################
+
+temp = round(sense.get_tempurature())
+humidity = round(sense.get_humidity())
+pressure = round(sense.get_pressure())
+message = "T=%dC, H=%d, P=%d " %(temp,humidity, pressure)
+
+#setup InstaPush variables
+# add your Instapush Application ID
+appID ="59bb6e6ba4c48a1cd674e33d"
+
+#add your Instapush Application Secret
+appSecret = "fd127d824390296b5f84818cddafeebe"
+pushEvent = "TempNotify"
+
+# use Curl to post to the Instapush API
+c=pycurl.Curl()
+
+# set API URL
+c.setopt(c.URL, 'https://api.instapush.im/v1/post')
+
+#---------1:47:00------instapush-----
+
+#setup custom headers for authentication variables and content type
+c.setopt(c.HTTPHEADER, ['x-instapush-appid: ' + appID, 'x-instapush-appscret: '+
+appSecret, 'Content-Type: application/json'])
+
+#use this to capture the response from our push API call
+buffer = StringIO()
+
+############################################################
+
+def(p(pushMessage):
+	#create a dict structure for JSON data to post
+	json_fields = {}
+	
+	# setup JSON values
+	json_fields['event'] = pushEvent
+	json_fields['trackers'] = {}
+	json_fields['trackers']['message'] = pushMessage 
+	#print(json_fields)
+	postfields = json.dumps(json_fields)
+
+	#make sure to send the JSON with post
+	c.setopt(c.POSTFIELDS, postfields)
+	
+	#set this so we can capture the response in our buffer
+	c.setopt(c.WRITEFUNCTION, buffer.write)
+
+	#uncomment to see the post sent
+	c.setopt(c.VERBOSE, True)
+
+----------1.53.16------------------
+
+#setup an indefinite loop that looks for temperature
+while True:
+	temp = round(sense.get_temperature())
+	humidity = round(sense.get_humidity())
+	pressure = round(sense.get_pressure())
+	message = ' T=%dC, H=%d, P=%d ' %(temp,humidity,pressure)
+	time.sleep(4)
+	log = open('weather.txt',"a")
+	now = str(asctime())
+	temp = int(temp)
+	show_number(temp, 200, 0, 60)
+	temp1 = temp
+	
+	log.write(now+''+message+'\n')
+	print(message)
+	log.close()
+	time.sleep(5)
+	
+	if temp >=hot:
+		pushMessage = "Its hot:  " + message
+		p(pushMessage)
+		c.perform()
+		# capture the response from the server
+		body = buffer.getvalue()
+		pushMessage = ""
+	
+	elif temp <= cold:
+		pushMessage = "Its cold: " + message
+		p(pushMessage)
+		c.perform()
+		#capture the response from the server
+		body=buffer.getvalue()
+		pushMessage=""
+
+	#print the response
+	#print(body)
+	
+	#reset the buffer
+	buffer.truncate(0)
+	buffer.seek(0)
+
+#cleanup
+c.close()
+GPIO.cleanup()
+
+----------done 1:55:55---------
